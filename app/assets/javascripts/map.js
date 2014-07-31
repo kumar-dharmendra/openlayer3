@@ -39,8 +39,8 @@ $(document).ready(function(){
   function onMoveEnd(evt) {
     var map_obj = evt.map;
     var extent = map_obj.getView().calculateExtent(map.getSize());
-    var custom_url = 'homes/get_coordinates.json?bbox=' + extent.join(',');
-    //var custom_url =  "http://dev.webici.idmakina.com/hexa_map/index.json?bbox=" + extent.join(',');
+    //var custom_url = 'homes/get_coordinates.json?bbox=' + extent.join(',');
+    var custom_url =  "http://dev.webici.idmakina.com/hexa_map/index.json?bbox=" + extent.join(',');
     var new_vector = new ol.layer.Vector({
       source: new ol.source.GeoJSON({
         projection: 'EPSG:3857',
