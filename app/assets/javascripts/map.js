@@ -40,7 +40,7 @@ $(document).ready(function(){
     var map_obj = evt.map;
     var extent = map_obj.getView().calculateExtent(map.getSize());
     var custom_url = 'homes/get_coordinates.json?bbox=' + extent.join(',');
-    //var custom_url =  "http://dev.webici.idmakina.com/hexa_map/index.js?bbox=" + extent.join(',');
+    //var custom_url =  "http://dev.webici.idmakina.com/hexa_map/index.json?bbox=" + extent.join(',');
     var new_vector = new ol.layer.Vector({
       source: new ol.source.GeoJSON({
         projection: 'EPSG:3857',
@@ -58,3 +58,7 @@ $(document).ready(function(){
 
   map.on('moveend', onMoveEnd);
 });
+
+//NetworkError: 401 Unauthorized - http://dev.webici.idmakina.com/hexa_map/index.json?bbox=-8188707.739602148,5701760.496435283,-8187316.1875698725,5702417.53639888"
+//index.j...3639888
+//Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://dev.webici.idmakina.com/hexa_map/index.json?bbox=-8188707.739602148,5701760.496435283,-8187316.1875698725,5702417.53639888. This can be fixed by moving the resource to the same domain or enabling CORS.
