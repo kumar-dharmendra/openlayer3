@@ -1,62 +1,43 @@
 $(document).ready(function(){
+  var vectorSource = new ol.source.ServerVector({
+    format: new ol.format.GeoJSON(),
+    loader: function(extent, resolution, projection) {
+      console.log(extent);
+      new_bbox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
+      var url = 'http://dev.webici.idmakina.com/hexa_map/index.js?bbox=' + new_bbox.join(',') + 'format_options=callback:loadFeatures';
 
-  //define view location that will be set default on loading of map
-  var view = new ol.View({
-    center: ol.proj.transform([-73.55416293442806, 45.509483330306004], 'EPSG:4326', 'EPSG:3857'),
-    maxZoom: 19,
-    zoom: 17
+      $.ajax({
+        url: url,
+        dataType: 'jsonp',
+        crossDomain: true
+      }).then(function(response) {
+        vectorSource.addFeatures(vectorSource.readFeatures(response));
+      });
+    },
+
+    projection: 'EPSG:3857'
   });
 
-  //difine tiles type like OSM(open street map) show street map
-  var raster = new ol.layer.Tile({
-    source: new ol.source.OSM()
-  });
-
-  //create vector of polygon
   var vector = new ol.layer.Vector({
-    source: new ol.source.GeoJSON(),
+    source: vectorSource,
     style: new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: '#018001',
-        width: 2.25
-      })
+      stroke: new ol.style.Stroke({color: 'green', width: 1})
     })
   });
 
-  // creating the map
+
   var map = new ol.Map({
-    layers: [raster, vector],
     target: 'map',
-    controls: ol.control.defaults({
-      attributionOptions: ({
-        collapsible: false
-      })
-    }),
-    view: view
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+      }), vector
+    ],
+    view: new ol.View({
+      center: ol.proj.transform([-73.55416293442806, 45.509483330306004], 'EPSG:4326', 'EPSG:3857'),
+      zoom: 18
+    })
   });
-
-  //register moveend event
-  function onMoveEnd(evt) {
-    var map_obj = evt.map;
-    var extent = map_obj.getView().calculateExtent(map.getSize());
-    //var custom_url = 'homes/get_coordinates.json?bbox=' + extent.join(',');
-    var custom_url =  "http://dev.webici.idmakina.com/hexa_map/index.json?bbox=" + extent.join(',');
-    var new_vector = new ol.layer.Vector({
-      source: new ol.source.GeoJSON({
-        projection: 'EPSG:3857',
-        url: custom_url
-      }),
-      style: new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: '#018001',
-          width: 2.25
-        })
-      })
-    });
-    map_obj.addLayer(new_vector);
-  }
-
-  map.on('moveend', onMoveEnd);
 });
 
 //NetworkError: 401 Unauthorized - http://dev.webici.idmakina.com/hexa_map/index.json?bbox=-8188707.739602148,5701760.496435283,-8187316.1875698725,5702417.53639888"
